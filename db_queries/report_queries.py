@@ -18,14 +18,13 @@ class report_queries:
             Transaction.senders_acc_id==user_data['acc_id'],
             Transaction.transaction_type=="transfer"
             ).all()
-    
     def received_money(user_data,db:Session):
         return db.query(Transaction).filter(
             Transaction.receivers_acc_id==user_data['acc_id'],
             Transaction.transaction_type=="transfer"
             ).all()
     
-    def transfered_money_to(sender_acc,user_data,db:Session):
+    def received_money_from(sender_acc,user_data,db:Session):
         return db.query(Transaction).filter(
             Transaction.senders_acc_id==sender_acc,
             Transaction.receivers_acc_id==user_data['acc_id'],

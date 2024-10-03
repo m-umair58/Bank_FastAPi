@@ -15,7 +15,7 @@ class report_services:
         return report_queries.received_money(user_data,db)
     
     def received_money_from(sender_acc,user_data,db):
-        return report_queries.transfered_money_to(sender_acc,user_data,db)
+        return report_queries.received_money_from(sender_acc,user_data,db)
     
     def deposits(user_data,db):
         return report_queries.deposits(user_data,db)
