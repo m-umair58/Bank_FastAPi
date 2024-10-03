@@ -12,6 +12,7 @@ class User(Base):
     user_password = Column(String, nullable=False)
     user_phone_number = Column(String, nullable=False)
     user_address = Column(String, nullable=True)
+    user_role = Column(String,nullable=False)
 
     # Define the relationship with the Account model
     accounts = relationship("Account", back_populates="user")
