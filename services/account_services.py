@@ -1,5 +1,6 @@
 from schemas.account_schema import AccountCreate,AccountGet
 from db_queries.account_queries import account_queries
+from db_queries.user_queries import user_queries
 from fastapi import HTTPException
 from starlette import status
 from models.account_model import Account
@@ -8,7 +9,10 @@ class AccountServices:
     def get_account_by_id(user_data,db):
         return account_queries.get_account_by_user_id(user_data['id'],db)
 
-    def create_account(account:AccountCreate,db):        
+    def create_account(account:AccountCreate,user_data,db):   
+        user_details=user_queries.get_user_by_id(user_data['id'],db)
+        if user_details.user_role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only admin has this previllege")
         account_number:AccountGet=account_queries.get_latest_account_number(db)
         def get_last_five_digits(account_number):
             # Ensure account_number is a string
@@ -35,7 +39,10 @@ class AccountServices:
 
         return {"details":"Account has been added successfully"}
     
-    def update_account(account:AccountCreate,db):
+    def update_account(account:AccountCreate,user_data,db):
+        user_details=user_queries.get_user_by_id(user_data['id'],db)
+        if user_details.user_role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only admin has this previllege")
         account_data= account_queries.get_account_by_user_id(account.user_id,db)
         if not account_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"User with id {account.user_id} doesn't exist!")
@@ -46,7 +53,10 @@ class AccountServices:
 
         return {"details":"Changes has been made successfully!"}
     
-    def delete_account(account:AccountCreate,db):
+    def delete_account(account:AccountCreate,user_data,db):
+        user_details=user_queries.get_user_by_id(user_data['id'],db)
+        if user_details.user_role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only admin has this previllege")
         account_data= account_queries.get_account_by_user_id(account.user_id,db)
         if not account_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"User with this id {account.user_id} doesn't exists!")

@@ -11,6 +11,7 @@ class UserCreate(OurModelClass):
     password:str
     phone_number:str
     address:str
+    role:str
 
 class UserOut(OurModelClass):
     id:int

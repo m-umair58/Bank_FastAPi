@@ -21,12 +21,19 @@ class UserServices:
         if user_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"User with this email already exists!")
         
+        if len(user.phone_number)!=11:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"Phone Number should be of length 11!")
+
+        if user.role!='user' and user.role != 'admin':
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"Role should be either user or admin")
+
         new_user = User(
             user_name = user.name,
             user_email =  user.email,
             user_password =get_password_hash(user.password),
             user_phone_number = user.phone_number,
-            user_address = user.address
+            user_address = user.address,
+            user_role = user.role
         )
 
         user_queries.add_user(new_user,db)
