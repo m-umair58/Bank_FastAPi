@@ -21,5 +21,5 @@ async def update_account(account:AccountCreate,user_data=Depends(get_user_info),
     return AccountServices.update_account(account,db)
 
 @router.delete('/delete')
-async def delete_account(account:AccountCreate,user_data=Depends(get_user_info),db:Session = Depends(get_db)):
-    return AccountServices.delete_account(account,db)
+async def delete_account(acc_id,user_data=Depends(get_user_info),db:Session = Depends(get_db)):
+    return AccountServices.delete_account(acc_id,user_data,db)

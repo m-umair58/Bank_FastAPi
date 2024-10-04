@@ -17,6 +17,12 @@ class account_queries:
     def get_latest_account_number(db:Session):
         return db.query(Account).order_by(Account.acc_id.desc()).first()
     
+    def match_acc_with_user(user_id,acc_id,db:Session):
+        return db.query(Account).filter(
+            Account.acc_id==acc_id,
+            Account.user_id==user_id
+        ).first()
+    
     def add_acc(account,db:Session):
         db.add(account)
         db.commit()

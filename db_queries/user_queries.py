@@ -10,7 +10,7 @@ class user_queries:
     
     def get_userName(user_name,db:Session):
         return db.query(User).filter(User.user_name==user_name).first()
-    
+
     def add_user(user,db:Session):
         db.add(user)
         db.commit()

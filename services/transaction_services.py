@@ -12,7 +12,20 @@ from database import get_db
 
 class TransactionServices:
     def create_transaction(t_type,amount,receiver:int|None=None,user_data=Depends(get_user_info),db:Session=Depends(get_db)):
-        account_id=account_queries.get_account_by_user_id(user_data['id'],db)
+        if t_type=='deposit' or t_type=='withdraw' and receiver:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="There Should be no receiver id here")
+
+        if t_type=='transfer' and receiver<=0:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You need put a valid receiver account id!")
+        if t_type=='transfer' and receiver is None:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You need put a valid receiver account id!")
+
+        if user_data['acc_id']==0:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You need to create an account first!")
+        account_id=account_queries.get_account_by_acc_id(user_data['acc_id'],db)
+        if user_data['acc_id']==receiver:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You cannot send money to the same account!")
+
         if t_type=="deposit":
             get_acc:AccountGet=account_queries.get_account_by_acc_id(account_id.acc_id,db)
             get_acc.acc_balance+=amount
@@ -30,8 +43,11 @@ class TransactionServices:
             get_acc.acc_balance-=amount
             account_queries.commit(db)
 
-            get_acc:AccountGet=account_queries.get_account_by_acc_id(receiver,db)# recievers increment
-            get_acc.acc_balance+=amount
+            get_acc2:AccountGet=account_queries.get_account_by_acc_id(receiver,db)# recievers increment
+            if get_acc2 is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Receiver account not found!")
+
+            get_acc2.acc_balance+=amount
             account_queries.commit(db)
             
         else:
