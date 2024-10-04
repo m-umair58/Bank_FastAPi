@@ -16,5 +16,5 @@ async def update(account_type,daily_limit:int,monthly_limit:int,user_data=Depend
     return account_limit_services.update_account_limit(account_type,daily_limit,monthly_limit,user_data,db)
 
 @router.post('/delete')
-async def delete(account_type,user_data,db):
+async def delete(account_type,user_data=Depends(get_user_info),db:Session=Depends(get_db)):
     return account_limit_services.delete_account_limit(account_type,user_data,db)
