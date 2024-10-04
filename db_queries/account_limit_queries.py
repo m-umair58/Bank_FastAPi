@@ -6,7 +6,7 @@ class account_limit_queries:
         db.add(new_account_limit)
         db.commit()
 
-    def commit(new_account_limit,db:Session):
+    def commit(db:Session):
         db.commit()
 
     def get_account_limit_by_type(account_type,db:Session):
@@ -14,3 +14,4 @@ class account_limit_queries:
     
     def delete(account_limit,db:Session):
         db.delete(account_limit)
+        db.commit()

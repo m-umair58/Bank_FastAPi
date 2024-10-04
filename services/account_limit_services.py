@@ -46,7 +46,7 @@ class account_limit_services:
 
         account_limit_queries.commit(db)
 
-        return {"Details":"New account type with its limits has been added"}
+        return {"Details":"Account limits have been updated"}
     
     def delete_account_limit(account_type,user_data,db):
         user_details=user_queries.get_user_by_id(user_data['id'],db)
@@ -59,5 +59,7 @@ class account_limit_services:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Account limit type not found!")
         
         account_limit_queries.delete(account_limit_details,db)
+
+        return {"Details":"Account limit type has been deleted"}
 
 
