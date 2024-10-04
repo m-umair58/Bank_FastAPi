@@ -32,6 +32,9 @@ class TransactionServices:
             account_queries.commit(db)
         elif t_type=="withdraw":
             get_acc:AccountGet=account_queries.get_account_by_acc_id(account_id.acc_id,db)
+            if amount>50000:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You can only withdraw 50,000 each time")
+
             if amount>get_acc.acc_balance:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Insuficient Balance")
             get_acc.acc_balance-=amount

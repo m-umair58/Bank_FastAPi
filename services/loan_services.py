@@ -7,9 +7,18 @@ class loan_service:
     def get_loan(loan_amount,days,user_data,db):
         loan_min=10000
         loan_max=1000000
-        if loan_amount<loan_min and loan_amount>loan_max:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"Loan should be within the range {loan_min}-{loan_max}")
+        if loan_amount<loan_min or loan_amount>loan_max:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Loan should be within the range {loan_min}-{loan_max}"
+                )
         
+        if days<1 or days>180 :
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Loan can be granted upto 180 days only"
+                )
+
         new_loan=Loan(
             amount=loan_amount,
             days = days,

@@ -7,7 +7,7 @@ from models.account_model import Account
 
 class AccountServices:
     def get_account_by_id(user_data,db):
-        return account_queries.get_account_by_user_id(user_data['acc_id'],db)
+        return account_queries.get_account_by_acc_id(user_data['acc_id'],db)
 
     def create_account(account:AccountCreate,user_data,db):   
         user_details=user_queries.get_user_by_id(user_data['id'],db)
