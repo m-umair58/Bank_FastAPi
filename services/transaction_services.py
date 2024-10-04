@@ -37,12 +37,19 @@ class TransactionServices:
         account_limit_details = account_limit_queries.get_account_limit_by_type(account_details.acc_type,db)
 
         # to check daily transaction limit
-        transactions = transaction_queries.get_transaction_by_user_id(user_data['acc_id'],date.today(),db)
+        daily_transactions = transaction_queries.get_transaction_for_current_day(user_data['acc_id'],date.today(),db)
 
-        total_transaction_amount = total_transactions(transactions)
-        print("*********",total_transaction_amount,"************")
-        if account_limit_details.daily_limit<total_transaction_amount+amount:
+        daily_transaction_amount = total_transactions(daily_transactions)
+        print("*********",daily_transaction_amount,"************")
+        if account_limit_details.daily_limit<daily_transaction_amount+amount:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You have crossed your daily transaction limit!")
+
+        monthly_transactions = transaction_queries.get_transactions_for_current_month(user_data['acc_id'],date.today(),db)
+        monthly_transaction_amount = total_transactions(monthly_transactions)
+        print("*********",monthly_transaction_amount,"************")
+
+        if account_limit_details.monthly_limit<monthly_transaction_amount+amount:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="You have crossed your monthly transaction limit!")
 
         account_id=account_queries.get_account_by_acc_id(user_data['acc_id'],db)
         if t_type=="deposit":
