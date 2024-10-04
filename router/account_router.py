@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.account_schema import AccountCreate
+from schemas.account_schema import AccountCreate,AccountUpdate
 from services.account_services import AccountServices
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ async def create_account(account:AccountCreate,user_data=Depends(get_user_info),
     return AccountServices.create_account(account,user_data,db)
 
 @router.put('/update')
-async def update_account(account:AccountCreate,user_data=Depends(get_user_info),db:Session = Depends(get_db)):
+async def update_account(account:AccountUpdate,user_data=Depends(get_user_info),db:Session = Depends(get_db)):
     return AccountServices.update_account(account,db)
 
 @router.delete('/delete')

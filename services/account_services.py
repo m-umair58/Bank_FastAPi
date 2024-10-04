@@ -1,4 +1,4 @@
-from schemas.account_schema import AccountCreate,AccountGet
+from schemas.account_schema import AccountCreate,AccountGet,AccountUpdate
 from db_queries.account_queries import account_queries
 from db_queries.user_queries import user_queries
 from fastapi import HTTPException
@@ -11,6 +11,11 @@ class AccountServices:
 
     def create_account(account:AccountCreate,user_data,db):   
         user_details=user_queries.get_user_by_id(user_data['id'],db)
+
+        user_details1=user_queries.get_user_by_id(account.user_id,db)
+        if user_details1 is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User with this id doesn't exists!")
+
         if user_details.user_role != "admin":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only admin has this previllege")
         if account.acc_type!="current" and account.acc_type!="saving":
@@ -42,15 +47,16 @@ class AccountServices:
 
         return {"details":"Account has been added successfully"}
     
-    def update_account(account:AccountCreate,user_data,db):
+    def update_account(account:AccountUpdate,user_data,db):
         user_details=user_queries.get_user_by_id(user_data['id'],db)
         if user_details.user_role != "admin":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Only admin has this previllege")
-        account_data= account_queries.get_account_by_user_id(account.user_id,db)
+        account_data= account_queries.get_account_by_acc_id(account.acc_id,db)
         if not account_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"User with id {account.user_id} doesn't exist!")
         
-        account_data=account.model_dump()
+        account_data.acc_type=account.acc_type
+        account_data.acc_balance=account.acc_balance
 
         account_queries.commit(db)
 
